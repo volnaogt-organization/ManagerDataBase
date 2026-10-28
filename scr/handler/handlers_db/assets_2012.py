@@ -1,3 +1,5 @@
+import os
+
 import pyodbc
 import pandas as pd
 
@@ -26,7 +28,7 @@ class Header2012:
         chosen_driver = available_drivers[0]
 
         conn_str = f'DRIVER={{{chosen_driver}}};SERVER={self.server};DATABASE={self.report_2012};Trusted_Connection=yes;'
-        sql_query = f"EXEC cprt_HPY_ProgramsMod 1, '{name_dse}'"
+        sql_query = f"EXEC cprt_HPY_ProgramsMod2 1, '{name_dse}'"
 
         try:
             with pyodbc.connect(conn_str) as conn:
@@ -53,12 +55,13 @@ class Header2012:
 
     def save_report_in_database(self, name_dse: str = None):
         if name_dse is None:
-            return
+            return {}
 
         date = datetime.now().strftime("%d.%m.%Y")
 
         self.database_reort2012.delete_by_name_import(name_dse)
 
+        data_save = {}
         for row_data in self.list_data_from_database:
             in_out_pt = f"{name_dse}/{row_data.get('DrawNoStr', '')}/{row_data.get('ProductProg', '')}"
 
@@ -70,9 +73,15 @@ class Header2012:
                 **row_data
             )
 
+            data_save[len(data_save)] = {
+                'NameImport': name_dse
+                , 'SearchResults': self.bool_search_results
+            }
+        return data_save
+
     def main(self, name_dse):
         self.script_invocation(name_dse=name_dse)
-        self.save_report_in_database(name_dse=name_dse)
+        return self.save_report_in_database(name_dse=name_dse)
 
 
 if __name__ == "__main__":

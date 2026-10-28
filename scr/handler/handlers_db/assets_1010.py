@@ -1,3 +1,5 @@
+import os
+
 import pyodbc
 import pandas as pd
 
@@ -28,7 +30,7 @@ class Header1010:
         current_date = datetime.now().strftime("%d.%m.%Y")
 
         conn_str = f'DRIVER={{{chosen_driver}}};SERVER={self.server};DATABASE={self.report_2012};Trusted_Connection=yes;'
-        sql_query = f"SET NOCOUNT ON; EXEC _Rep_UpperMatnr '{name_dse}', '{current_date}'"
+        sql_query = f"SET NOCOUNT ON; EXEC _Rep_UpperMatnr2 '{name_dse}', '{current_date}'"
 
 
         try:
@@ -64,6 +66,7 @@ class Header1010:
         self.database_reort2012.delete_by_name_import(name_dse)
 
         # 2. Записываем новые данные
+        data_save={}
         for row_data in self.list_data_from_database:
             # Исправлены кавычки в f-string, чтобы не было синтаксической ошибки
             in_out_pt = f"{name_dse}/{row_data.get('DrawNoStr', '')}"
@@ -76,10 +79,17 @@ class Header1010:
                 **row_data
             )
 
+            data_save[len(data_save)] = {
+                'NameImport':name_dse
+                ,'SearchResults':self.bool_search_results
+            }
+        return data_save
+
+
     def main(self, name_dse):
-        if name_dse is None: return
+        if name_dse is None: return {}
         self.script_invocation(name_dse=name_dse)
-        self.save_report_in_database(name_dse=name_dse)
+        return self.save_report_in_database(name_dse=name_dse)
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ REPORT_1010_COLUMNS = list(REPORT_1010_SCHEMA.keys())
 
 
 class SQLiteDatabaseReport1010:
-    def __init__(self, db_path: str = r"\\volna.dmn\data\obmen\Служба Главного инженера\ОГТ\ЧПУ\Программы Python\database_program\report_table.db"):
+    def __init__(self, db_path: str = r"\\volna.dmn\data\obmen\Служба Главного инженера\ОГТ\ЧПУ\Программы Python\database_program\report_table1.db"):
         """
         Инициализация менеджера для отчета 1010.
         :param db_path: Путь к файлу базы данных.
