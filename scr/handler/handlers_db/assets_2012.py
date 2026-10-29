@@ -16,6 +16,7 @@ class Header2012:
         self.report_2012 = 'SAP_RT'
 
         self.bool_search_results = 1
+        self.row_index_list_dse = ''
         self.list_data_from_database = []
 
     def script_invocation(self, name_dse):
@@ -33,10 +34,11 @@ class Header2012:
         try:
             with pyodbc.connect(conn_str) as conn:
                 print("Выполняется запрос к MS SQL...")
-                df = pd.read_sql(sql_query, conn)
-
+                try:
+                    df = pd.read_sql(sql_query, conn)
+                except:pass
             data_list = df.to_dict(orient='records')
-            print(f"Успешно получено строк: {len(data_list)}")
+            print(f"{name_dse} [{self.row_index_list_dse}]: получено строк: {len(data_list)}")
 
             if len(data_list) == 0:
                 data_list.append({
@@ -79,7 +81,9 @@ class Header2012:
             }
         return data_save
 
-    def main(self, name_dse):
+    def main(self, name_dse,row_index_list_dse=''):
+        self.row_index_list_dse = row_index_list_dse
+        self.bool_search_results = 1
         self.script_invocation(name_dse=name_dse)
         return self.save_report_in_database(name_dse=name_dse)
 

@@ -1,3 +1,5 @@
+import os
+
 from scr.manager_database import MainLogic
 from scr.handler.handlers_excel.handler_reader_excel import DataAcquisition, ReaderExcelColumn
 
@@ -58,8 +60,11 @@ while True:
             MainLogic().main(dse_list=dse_list, user_selected_program=choice_programm)
     if choice_input_dse == '2':
             while True:
-                # path_to_excel_file = input("Введите путь к файлу: ")
+                print(r"┌[2] Введите путь к файлу: C:\Users\yakovlev_nd\Documents\задачи по 1010.xlsx")
+                # print("┌[2] Введите путь к файлу: ", end='')
+                # path_to_excel_file = input()
                 path_to_excel_file = r"C:\Users\yakovlev_nd\Documents\задачи по 1010.xlsx"
+                print(f'└[2] Открытие файла: {os.path.basename(path_to_excel_file)}')
                 view_file= DataAcquisition(path_to_excel_file)
 
                 list_sheets = view_file.get_list_excel_file()
@@ -76,19 +81,21 @@ while True:
                     print(f'  ├─[{idx_list}] {list_name_headers[idx_list-1]}')
 
                 choice_column = int(input('  └─[Ввод: '))
-                print(list_name_headers[choice_column-1])
+                print(list_name_headers[choice_column-1], end=': ')
 
                 data_excel = ReaderExcelColumn(
                     path_to_excel_file=path_to_excel_file
                     , name_sheet=list_sheets[int(choice_name_sheet)]
                 ).get_data_column([choice_column])
 
-                dse_list = data_excel.get(list_name_headers[choice_column-1])
+                dse_list = list(dict.fromkeys(data_excel.get(list_name_headers[choice_column-1])))
+                print(len(dse_list))
 
-                save_input = input('''Сохранить выход в файле? 
-                1.да
-                0.нет
-                :''')
+                # save_input = input('''Сохранить выход в файле?
+                # 1.да
+                # 0.нет
+                # :''')
+                save_input=1
 
                 MainLogic().main(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
                 break
