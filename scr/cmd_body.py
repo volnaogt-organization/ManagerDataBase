@@ -60,10 +60,10 @@ while True:
             MainLogic().main(dse_list=dse_list, user_selected_program=choice_programm)
     if choice_input_dse == '2':
             while True:
-                print(r"┌[2] Введите путь к файлу: C:\Users\yakovlev_nd\Documents\задачи по 1010.xlsx")
-                # print("┌[2] Введите путь к файлу: ", end='')
-                # path_to_excel_file = input()
-                path_to_excel_file = r"C:\Users\yakovlev_nd\Documents\задачи по 1010.xlsx"
+                # print(r"┌[2] Введите путь к файлу: C:\Users\yakovlev_nd\Documents\задачи по 1010.xlsx")
+                print("┌[2] Введите путь к файлу: ", end='')
+                path_to_excel_file = input()
+                # path_to_excel_file = r"C:\Users\yakovlev_nd\Documents\задачи по 1010.xlsx"
                 print(f'└[2] Открытие файла: {os.path.basename(path_to_excel_file)}')
                 view_file= DataAcquisition(path_to_excel_file)
 
