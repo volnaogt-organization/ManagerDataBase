@@ -1,9 +1,10 @@
 import os
-
+import urllib
 import pyodbc
 import pandas as pd
 
 from datetime import datetime
+from sqlalchemy import create_engine
 
 from scr.database_assets.handling_database.handler_report_2012 import SQLiteDatabaseReport2012
 
@@ -29,16 +30,19 @@ class Header2012:
         chosen_driver = available_drivers[0]
 
         conn_str = f'DRIVER={{{chosen_driver}}};SERVER={self.server};DATABASE={self.report_2012};Trusted_Connection=yes;'
+        # 1. Экранируем строку подключения для SQLAlchemy
+        params = urllib.parse.quote_plus(conn_str)
+        # 2. Создаем движок (engine), который требует pandas
+        engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
         sql_query = f"EXEC cprt_HPY_ProgramsMod2 1, '{name_dse}'"
 
         try:
-            with pyodbc.connect(conn_str) as conn:
-                print("Выполняется запрос к MS SQL...")
-                try:
-                    df = pd.read_sql(sql_query, conn)
-                except:pass
-            data_list = df.to_dict(orient='records')
-            print(f"{name_dse} [{self.row_index_list_dse}]: получено строк: {len(data_list)}")
+            df = pd.read_sql(sql_query, engine)
+
+            data_list = df.to_dict(orient="records")
+            print(
+                f"{name_dse} [{self.row_index_list_dse}]: получено строк: {len(data_list)}"
+            )
 
             if len(data_list) == 0:
                 data_list.append({
@@ -90,4 +94,4 @@ class Header2012:
 
 if __name__ == "__main__":
     app = Header2012()
-    app.main('ЛТИЯ46451100400000000')
+    app.main('ПБИН.714300.035')

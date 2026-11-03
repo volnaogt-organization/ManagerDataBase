@@ -33,7 +33,7 @@ class MainLogic:
 
         return dse, result
 
-    def main(self, dse_list: list, user_selected_program: int = None, save_input=0, max_threads=5):
+    def main(self, dse_list: list, user_selected_program: int = None, save_input=0, max_threads=6):
         if user_selected_program is None or not dse_list:
             return
 
@@ -43,14 +43,12 @@ class MainLogic:
 
         print(f"Начало обработки {total_dse} элементов в {max_threads} потоков...")
 
-        # Используем ThreadPoolExecutor для параллельного выполнения
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
-            # Подготавливаем задачи
             futures = [
                 executor.submit(
                     self._process_single_dse,
                     dse,
-                    i + 1,  # Индексация с 1 для красивого вывода
+                    i + 1,
                     total_dse,
                     user_selected_program
                 )
@@ -62,8 +60,6 @@ class MainLogic:
                 try:
                     dse, result = future.result()
                     if result:
-                        # Ключом делаем сам dse, а не его порядковый номер.
-                        # Это гарантирует, что данные не перепутаются.
                         save_data[dse] = result
                 except Exception as e:
                     print(f"Ошибка при обработке одного из DSE: {e}")
