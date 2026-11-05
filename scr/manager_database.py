@@ -68,8 +68,8 @@ class MainLogic:
         duration = timedelta(seconds=elapsed)
         print(f'Время обращения к базе данных: {duration}')
 
-        if save_input:
+        if bool(save_input):
             from scr.excel_assets.enters.excel_enter import ExcelDataInserter
 
-            writer = ExcelDataInserter(file_path=os.path.join(os.getcwd(), 'result.xlsx'))
-            writer.insert_data(data=save_data, sheet_name=datetime.now().strftime("%d.%m.%Y"))
+            writer = ExcelDataInserter(file_path=os.path.join(os.getcwd(), 'result_manager_database_reports.xlsx'))
+            writer.insert_data(data=save_data, sheet_name=f'rep-{user_selected_program} date-{datetime.now().strftime("%d.%m.%Y")}')

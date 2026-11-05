@@ -10,11 +10,13 @@ while True:
         choice_programm = input(f"""╔════════════════════════════════════════════════════════════╗
 {'║':<21} {'Manager DataBase':<39}║
 ╚════════════════════════════════════════════════════════════╝
-Выберите отчет который хотите обновить в базе данных:
-    1. 1010
-    2. 2012
-    0. Конец
-Программа №:  """)
+ ┌───────────────────────────────────────────────────────────┐
+┌┤    Выберите отчет который хотите обновить в базе данных:  │
+│└───────────────────────────────────────────────────────────┘
+├[1] 1010
+├[2] 2012
+├[0] Конец
+└─[Программа №:  """)
         main_menu = False
         if choice_programm == '0':
             print('Нажмите Enter для выхода.')
@@ -28,17 +30,28 @@ while True:
 
             break
 
-    choice_input_dse = input("""    ┌──────────────────────────────────┐
-┌───┤   Выберите способ ввода ДСЕ:     │
-│   └──────────────────────────────────┘
-├─[1] Одно ДСЕ (или несколько через '$'): ЛТИЯ.716713.001$ЛТИЯ.712341.004
-├─[2] Прочитать столбец из Excel файла
-├─[0] Назад
+    choice_input_dse = input("""
+ ┌───────────────────────────────────────────────────────────┐
+┌┤   Выберите способ ввода ДСЕ:                              │
+│└───────────────────────────────────────────────────────────┘
+├[1] Одно ДСЕ (или несколько через '$'): ЛТИЯ.716713.001$ЛТИЯ.712341.004
+├[2] Прочитать столбец из Excel файла
+├[0] Назад
 └─[Ввод: """)
     if choice_input_dse == '0':
         main_menu = True
         print('\n')
         continue
+    if not choice_input_dse in ['1','2']: continue
+
+#     save_input = int(input(''' ┌───────────────────────────────┐
+# ┌┤   Сохранить выход в файле?    │
+# │└───────────────────────────────┘
+# ├[1] Да
+# ├[0] Нет
+# └─[Ввод:'''))
+    save_input = 1
+
     if choice_input_dse == '1':
         while True:
             dse_input = input("[1] Одно ДСЕ (или несколько через '$'): ")
@@ -57,7 +70,7 @@ while True:
                     dse_list.remove(dse)
             del dse
 
-            MainLogic().main(dse_list=dse_list, user_selected_program=choice_programm)
+            MainLogic().main(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
     if choice_input_dse == '2':
             while True:
                 # print(r"┌[2] Введите путь к файлу: C:\Users\yakovlev_nd\Documents\задачи по 1010.xlsx")
@@ -90,12 +103,6 @@ while True:
 
                 dse_list = list(dict.fromkeys(data_excel.get(list_name_headers[choice_column-1])))
                 print(len(dse_list))
-
-                # save_input = input('''Сохранить выход в файле?
-                # 1.да
-                # 0.нет
-                # :''')
-                save_input=1
 
                 MainLogic().main(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
                 break

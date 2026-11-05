@@ -78,11 +78,24 @@ class Header2012:
                 SearchResults=self.bool_search_results,
                 **row_data
             )
+            list_product_prog = [None, None]
+            try:
+                list_product_prog = str(row_data.get('ProductProg','')).split(';')
+            except:
+                list_product_prog = [None,None]
+            try:
+                data_save[len(data_save)] = {
+                    'PDrawNoStr': row_data.get('PDrawNoStr','')
+                    , 'SearchResults': self.bool_search_results
+                    ,'TeamNo':row_data.get('TeamNo','')
+                    ,'DrawNoStr':row_data.get('DrawNoStr','')
+                    ,'ShortName':row_data.get('ShortName','')
+                    ,'ProductProg: name':list_product_prog[0]
+                    ,'ProductProg: date last mod':list_product_prog[1]
+                }
+            except Exception as error_save:
+                print('assets_2012:',error_save)
 
-            data_save[len(data_save)] = {
-                'NameImport': name_dse
-                , 'SearchResults': self.bool_search_results
-            }
         return data_save
 
     def main(self, name_dse,row_index_list_dse=''):
