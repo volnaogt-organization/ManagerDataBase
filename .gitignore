@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+test
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -221,6 +222,4 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-test/
-test/1.py
-/test/
+

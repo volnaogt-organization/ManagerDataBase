@@ -1,6 +1,7 @@
 import os
 import time
 import concurrent.futures
+
 from datetime import timedelta, datetime
 
 from scr.handler.handlers_db.assets_1010 import Header1010
@@ -9,8 +10,6 @@ from scr.handler.handlers_db.assets_2012 import Header2012
 
 class MainLogic:
     def __init__(self):
-        # Экземпляры здесь создавать больше не обязательно,
-        # так как мы будем создавать их изолированно в каждом потоке.
         pass
 
     def _process_single_dse(self, dse, dse_index, total_dse, user_selected_program):

@@ -41,9 +41,6 @@ class ExcelColumnReader:
 
         self._ws = self._select_sheet(sheet)
 
-    # ------------------------------------------------------------------
-    # Служебные методы
-    # ------------------------------------------------------------------
 
     def _select_sheet(self, sheet: Optional[Union[str, int]]):
         if sheet is None:
@@ -71,9 +68,6 @@ class ExcelColumnReader:
         """Приводит значение к строке без лишних пробелов."""
         return "" if value is None else str(value).strip()
 
-    # ------------------------------------------------------------------
-    # Свойства
-    # ------------------------------------------------------------------
 
     @property
     def sheet_names(self) -> List[str]:
@@ -112,10 +106,6 @@ class ExcelColumnReader:
 
         return list(self._headers_cache)
 
-    # ------------------------------------------------------------------
-    # Управление листами
-    # ------------------------------------------------------------------
-
     def select_sheet(self, sheet: Union[str, int, None]) -> None:
         """
         Переключиться на другой лист.
@@ -127,9 +117,7 @@ class ExcelColumnReader:
         self._ws = self._select_sheet(sheet)
         self._headers_cache = None
 
-    # ------------------------------------------------------------------
-    # Получение индекса колонки
-    # ------------------------------------------------------------------
+
 
     def column_index(self, column: Union[int, str]) -> int:
         """
@@ -180,9 +168,6 @@ class ExcelColumnReader:
 
         return idx
 
-    # ------------------------------------------------------------------
-    # Получение одной колонки
-    # ------------------------------------------------------------------
 
     def get_column(
         self,
@@ -215,9 +200,6 @@ class ExcelColumnReader:
             )
         ]
 
-    # ------------------------------------------------------------------
-    # Получение нескольких колонок
-    # ------------------------------------------------------------------
 
     def get_columns(
         self,
@@ -278,9 +260,6 @@ class ExcelColumnReader:
 
         return result
 
-    # ------------------------------------------------------------------
-    # Итерация по строкам
-    # ------------------------------------------------------------------
 
     def iter_rows(self, values_only: bool = True):
         """
@@ -297,9 +276,6 @@ class ExcelColumnReader:
 
         yield from self._ws.iter_rows(min_row=min_row, values_only=values_only)
 
-    # ------------------------------------------------------------------
-    # Получение строк как словарей
-    # ------------------------------------------------------------------
 
     def to_records(self, skip_empty_rows: bool = True) -> Iterator[Dict[str, Any]]:
         """
@@ -342,9 +318,6 @@ class ExcelColumnReader:
 
             yield dict(zip(prepared_headers, row))
 
-    # ------------------------------------------------------------------
-    # Удобный доступ через []
-    # ------------------------------------------------------------------
 
     def __getitem__(self, column: Union[int, str]) -> List[Any]:
         """
@@ -356,9 +329,6 @@ class ExcelColumnReader:
         """
         return self.get_column(column)
 
-    # ------------------------------------------------------------------
-    # Закрытие файла / context manager
-    # ------------------------------------------------------------------
 
     def close(self) -> None:
         self._wb.close()

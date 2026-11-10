@@ -1,10 +1,8 @@
 import os
 from typing import Dict, Any, List
 
-# Импортируем новый универсальный менеджер
 from scr.database_assets.receiver_sqlite_database import SQLiteManager
 
-# Схема таблицы: {название_колонки: SQL_тип}
 REPORT_1010_SCHEMA = {
     'NameImport':'TEXT',
     'DateStart': 'TEXT',
@@ -76,20 +74,3 @@ class SQLiteDatabaseReport1010:
         """Безопасное закрытие соединения при удалении объекта."""
         if hasattr(self, 'data_base') and self.data_base:
             self.data_base.close()
-
-
-if __name__ == "__main__":
-    db_file = r"\\volna.dmn\data\obmen\Служба Главного инженера\ОГТ\ЧПУ\Программы Python\database_program\report_table.db"
-    app = SQLiteDatabaseReport1010(db_path=db_file)
-    app.set_program_db(
-        NameImport='weqewq'
-        ,DateStart='qweqwec'
-        ,Matnr='qweqweqw'
-        ,DrawNoStr='qweewq'
-        ,ShortName='eee'
-        ,SumAmount='ui2378gb'
-    )
-
-
-    print("Все данные:", app.get_all_db_program())
-    print("\nДанные по DrawNoStr:", app.get_program_data('ЛТИЯ.735214.055'))

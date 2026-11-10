@@ -7,11 +7,13 @@ main_menu = True
 choice_programm = 0
 while True:
     if main_menu:
+        line_text_choice_program = 'Выберите отчет который хотите обновить в базе данных:'
+        indentation_choice_program = (61-len(line_text_choice_program) - 2)/2
         choice_programm = input(f"""╔════════════════════════════════════════════════════════════╗
 {'║':<21} {'Manager DataBase':<39}║
 ╚════════════════════════════════════════════════════════════╝
  ┌───────────────────────────────────────────────────────────┐
-┌┤    Выберите отчет который хотите обновить в базе данных:  │
+┌┤{'':<{indentation_choice_program}}{line_text_choice_program}{'':<{indentation_choice_program}}│
 │└───────────────────────────────────────────────────────────┘
 ├[1] 1010
 ├[2] 2012
@@ -30,9 +32,12 @@ while True:
 
             break
 
-    choice_input_dse = input("""
+    line_text_choice_input_dse = 'Выберите способ ввода ДСЕ: '
+    indentation_choice_input_dse = (61 - len(line_text_choice_input_dse) - 2) / 2
+
+    choice_input_dse = input(f"""
  ┌───────────────────────────────────────────────────────────┐
-┌┤   Выберите способ ввода ДСЕ:                              │
+┌┤{'':<{indentation_choice_input_dse}}{line_text_choice_input_dse}{'':<{indentation_choice_input_dse}}│
 │└───────────────────────────────────────────────────────────┘
 ├[1] Одно ДСЕ (или несколько через '$'): ЛТИЯ.716713.001$ЛТИЯ.712341.004
 ├[2] Прочитать столбец из Excel файла

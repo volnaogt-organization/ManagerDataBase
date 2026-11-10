@@ -98,31 +98,3 @@ class SQLiteDatabaseReport2012:
         """Безопасное закрытие соединения при удалении объекта."""
         if hasattr(self, 'data_base') and self.data_base:
             self.data_base.close()
-
-
-if __name__ == "__main__":
-    # Путь к БД (директория создастся автоматически)
-    db_file = r"\\volna.dmn\data\obmen\Служба Главного инженера\ОГТ\ЧПУ\Программы Python\database_program\report_table.db"
-    app = SQLiteDatabaseReport2012(db_path=db_file)
-
-    # Пример записи данных
-    app.set_program_db(
-        NameImport='002',
-        TeamNo='11102',
-        Matnr='ЛТИЯ73521405500000000',
-        DrawNoStr='ЛТИЯ.735214.055',
-        ShortName='Площадка',
-        ProductProg='LTIY.735214.055 U1.nc; 05.04.2026',
-        PriorityNo=0,
-        Type='Деталь',
-        Matnr1='ЛТИЯ73521405500000000',
-        NameOper='Фрезерная с ЧПУ',
-        NumOper=4,
-        IdProg=5358365,
-        PDrawNoStr='ЛТИЯ.464511.004',
-        PShortName='Радиостанция «Ширина», индекс Р-225 (изделие Р-225-В ЛТИЯ.464511.004 ЛТИЯ.464511.004 ТУ)'
-    )
-
-    # Пример получения данных
-    print("Все данные:", app.get_all_db_program())
-    print("\nДанные по DrawNoStr:", app.get_program_data('ЛТИЯ.735214.055'))

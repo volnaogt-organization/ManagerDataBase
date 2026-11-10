@@ -15,6 +15,7 @@ class Header2012:
 
         self.server = 'DC-HV-SQLVOLNA'
         self.report_2012 = 'SAP_RT'
+        self.name_script = 'cprt_HPY_ProgramsMod2'
 
         self.bool_search_results = 1
         self.row_index_list_dse = ''
@@ -34,7 +35,7 @@ class Header2012:
         params = urllib.parse.quote_plus(conn_str)
         # 2. Создаем движок (engine), который требует pandas
         engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
-        sql_query = f"EXEC cprt_HPY_ProgramsMod2 1, '{name_dse}'"
+        sql_query = f"EXEC {self.name_script} 1, '{name_dse}'"
 
         try:
             df = pd.read_sql(sql_query, engine)

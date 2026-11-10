@@ -15,6 +15,7 @@ class Header1010:
 
         self.server = 'DC-HV-SQLVOLNA'
         self.report_2012 = 'SAP_RT'
+        self.name_script = '_Rep_UpperMatnr2'
 
         self.bool_search_results = 1
         self.row_index_list_dse = ''
@@ -32,12 +33,10 @@ class Header1010:
         current_date = datetime.now().strftime("%d.%m.%Y")
 
         conn_str = f'DRIVER={{{chosen_driver}}};SERVER={self.server};DATABASE={self.report_2012};Trusted_Connection=yes;'
-        # 1. Экранируем строку подключения для SQLAlchemy
         params = urllib.parse.quote_plus(conn_str)
-        # 2. Создаем движок (engine), который требует pandas
         engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
 
-        sql_query = f"SET NOCOUNT ON; EXEC _Rep_UpperMatnr2 '{name_dse}', '{current_date}'"
+        sql_query = f"SET NOCOUNT ON; EXEC {self.name_script} '{name_dse}', '{current_date}'"
 
 
         try:
@@ -70,13 +69,10 @@ class Header1010:
 
         date = datetime.now().strftime("%d.%m.%Y")
 
-        # 1. Удаляем старые записи (вызываем метод обертки)
         self.database_reort2012.delete_by_name_import(name_dse)
 
-        # 2. Записываем новые данные
         data_save={}
         for row_data in self.list_data_from_database:
-            # Исправлены кавычки в f-string, чтобы не было синтаксической ошибки
             in_out_pt = f"{name_dse}/{row_data.get('DrawNoStr', '')}"
 
             self.database_reort2012.set_program_db(
