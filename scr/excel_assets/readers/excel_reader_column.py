@@ -142,7 +142,6 @@ class ExcelColumnReader:
                     if self._normalize(header) == target:
                         return i
 
-            # Если не нашли заголовок, пробуем как букву столбца.
             if column.isdigit():
                 idx = int(column)
             else:

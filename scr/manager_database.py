@@ -6,6 +6,7 @@ from datetime import timedelta, datetime
 
 from scr.handler.handlers_db.assets_1010 import Header1010
 from scr.handler.handlers_db.assets_2012 import Header2012
+from scr.handler.annual_plan import HandlerAnnualPlan
 
 
 class MainLogic:
@@ -31,6 +32,11 @@ class MainLogic:
             return None
 
         return dse, result
+
+    @staticmethod
+    def start_annual_plan(path_to_excel_file):
+        os.path.isfile(path_to_excel_file)
+        HandlerAnnualPlan().main(path_to_excel_file)
 
     def main(self, dse_list: list, user_selected_program: int = None, save_input=0, max_threads=6):
         if user_selected_program is None or not dse_list:

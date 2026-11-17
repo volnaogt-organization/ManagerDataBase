@@ -33,7 +33,6 @@ class SQLiteManager:
         self.schema = schema
         self.unique_keys = unique_keys
 
-        # Подключение
         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.cur = self.conn.cursor()
@@ -62,17 +61,14 @@ class SQLiteManager:
         Универсальный UPSERT (INSERT or UPDATE).
         :param data: Словарь {колонка: значение}.
         """
-        # Исключаем AUTOINCREMENT поля из вставки, если их нет в данных
         insert_cols = [k for k in self.schema.keys()
                        if 'AUTOINCREMENT' not in self.schema[k].upper() or k in data]
 
-        # Фильтруем данные, оставляя только те, что есть в схеме
         filtered_data = {k: data[k] for k in insert_cols if k in data}
 
         col_names = ', '.join(filtered_data.keys())
         placeholders = ', '.join(['?'] * len(filtered_data))
 
-        # Колонки для обновления (все, кроме тех, что в unique_keys)
         update_cols = [k for k in filtered_data.keys() if k not in self.unique_keys]
         update_set = ', '.join([f"{k}=excluded.{k}" for k in update_cols])
 
