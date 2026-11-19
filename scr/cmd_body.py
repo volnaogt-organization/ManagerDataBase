@@ -12,27 +12,26 @@ while True:
     if main_menu:
         line_text_choice_program = 'Выберите отчет который хотите обновить в базе данных:'
         indentation_choice_program = (61 - len(line_text_choice_program) - 2) / 2
-        choice_programm = input(f"""╔════════════════════════════════════════════════════════════╗
-{'║':<21} {'Manager DataBase':<39}║
-╚════════════════════════════════════════════════════════════╝
- ┌───────────────────────────────────────────────────────────┐
-┌┤{'':<{indentation_choice_program}}{line_text_choice_program}{'':<{indentation_choice_program}}│
-│└───────────────────────────────────────────────────────────┘
-├[1] 1010
-├[2] 2012
-├[365] Загрузка годового отчета
-├[0] Конец
-└─[Программа №:  """)
+        choice_programm = input(f"""╔══════════════════════════════════════════════════════════════╗
+{'║':<22} {'Manager DataBase':<40}║
+╚══════════════════════════════════════════════════════════════╝
+  ┌───────────────────────────────────────────────────────────┐
+ ┌┤{'':<{indentation_choice_program}}{line_text_choice_program}{'':<{indentation_choice_program}}│
+ │└───────────────────────────────────────────────────────────┘
+ ├[1] 1010
+ ├[2] 2012
+ ├[3] УП по очередям
+ ├[365] Загрузка годового отчета
+ ├[0] Конец
+ └─[Программа №:  """)
         main_menu = False
         if choice_programm == '0':
             print('Нажмите Enter для выхода.')
             break
-        if choice_programm in ['1', '1010']:
-            choice_programm = 1010
-        elif choice_programm in ['2', '2012']:
-            choice_programm = 2012
-        elif choice_programm in ['365', 'годовой отчет', 'годовой отчёт']:
-            choice_programm = 365
+        if choice_programm in ['1', '1010']: choice_programm = 1010
+        elif choice_programm in ['2', '2012']: choice_programm = 2012
+        elif choice_programm in ['3']: choice_programm = 3
+        elif choice_programm in ['365', 'годовой отчет', 'годовой отчёт']: choice_programm = 365
         else:
             input('Такой программы нет, ошибка.')
             main_menu = True
@@ -42,15 +41,15 @@ while True:
     line_text_choice_input_dse = 'Выберите способ ввода ДСЕ: '
     indentation_choice_input_dse = (61 - len(line_text_choice_input_dse) - 2) / 2
 
-    if not choice_programm in [365]:
+    if not choice_programm in [365, 3]:
         choice_input_dse = input(f"""
- ┌───────────────────────────────────────────────────────────┐
-┌┤{'':<{indentation_choice_input_dse}}{line_text_choice_input_dse}{'':<{indentation_choice_input_dse}}│
-│└───────────────────────────────────────────────────────────┘
-├[1] Одно ДСЕ (или несколько через '$'): ЛТИЯ.716713.001$ЛТИЯ.712341.004
-├[2] Прочитать столбец из Excel файла
-├[0] Назад
-└─[Ввод: """)
+  ┌───────────────────────────────────────────────────────────┐
+ ┌┤{'':<{indentation_choice_input_dse}}{line_text_choice_input_dse}{'':<{indentation_choice_input_dse}}│
+ │└───────────────────────────────────────────────────────────┘
+ ├[1] Одно ДСЕ (или несколько через '$'): ЛТИЯ.716713.001$ЛТИЯ.712341.004
+ ├[2] Прочитать столбец из Excel файла
+ ├[0] Назад
+ └─[Ввод: """)
         if choice_input_dse == '0':
             main_menu = True
             print('\n')
@@ -58,17 +57,14 @@ while True:
         if not choice_input_dse in ['1', '2']: continue
     else:
         choice_input_dse = '3'
-    #     save_input = int(input(''' ┌───────────────────────────────┐
-    # ┌┤   Сохранить выход в файле?    │
-    # │└───────────────────────────────┘
-    # ├[1] Да
-    # ├[0] Нет
-    # └─[Ввод:'''))
+
+
     save_input = 1
 
     if choice_input_dse == '1':
         while True:
-            dse_input = input("[1] Одно ДСЕ (или несколько через '$'), или 0 для отмены выбора: ")
+            dse_input = input(" [1] Одно ДСЕ (или несколько через '$'), или 0 для отмены выбора: ")
+
             if dse_input == '0':
                 main_menu = True
                 print('\n')
@@ -85,34 +81,36 @@ while True:
             del dse
 
             if choice_programm == 1010:
-                MainLogic().main(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
+                MainLogic().start_generate_repor_database_volna(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
+
+
     if choice_input_dse == '2':
         while True:
-            print("┌[2] Введите путь к файлу, или 0 для отмены выбора: ", end='')
+            print(" ┌[2] Введите путь к файлу, или 0 для отмены выбора: ", end='')
             path_to_excel_file = input()
             if '"' in path_to_excel_file: path_to_excel_file = path_to_excel_file.replace('"', '')
             if "'" in path_to_excel_file: path_to_excel_file = path_to_excel_file.replace("'", '')
             if path_to_excel_file in ['0', 'выход']:
-                print(f'└[0] Выход')
+                print(f' └[0] Выход')
                 main_menu = True
                 break
-            print(f'└[2] Открытие файла: {os.path.basename(path_to_excel_file)}')
+            print(f' └[2] Открытие файла: {os.path.basename(path_to_excel_file)}')
             view_file = DataAcquisition(path_to_excel_file)
 
             list_sheets = view_file.get_list_excel_file()
-            print('''┌───────────────────────────┐
-│   Выберите лист файла:    │
-└┬──────────────────────────┘''')
+            print(''' ┌───────────────────────────┐
+ │   Выберите лист файла:    │
+ └┬──────────────────────────┘''')
             for idx_list in range(len(list_sheets)):
-                print(f' ├─[{idx_list}] {list_sheets[idx_list]}')
+                print(f'  ├─[{idx_list}] {list_sheets[idx_list]}')
 
             choice_name_sheet = input(' └┬[Ввод: ')
             list_name_headers = view_file.get_headers(name_list=list_sheets[int(choice_name_sheet)])
 
             for idx_list in range(1, len(list_name_headers) + 1):
-                print(f'  ├─[{idx_list}] {list_name_headers[idx_list - 1]}')
+                print(f'   ├─[{idx_list}] {list_name_headers[idx_list - 1]}')
 
-            choice_column = int(input('  └─[Ввод: '))
+            choice_column = int(input('   └─[Ввод: '))
             print(list_name_headers[choice_column - 1], end=': ')
 
             data_excel = ReaderExcelColumn(
@@ -122,30 +120,33 @@ while True:
 
             dse_list = list(dict.fromkeys(data_excel.get(list_name_headers[choice_column - 1])))
             print(len(dse_list))
-
-            MainLogic().main(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
+            if choice_input_dse in [2012]:
+                MainLogic().start_generate_repor_database_volna(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
             break
+
+
     if choice_input_dse == '3':
         while True:
 
-            print("┌[3] Введите путь к файлу, или 0 для отмены выбора: ", end='')
+            print(" ┌─[3] Введите путь к файлу, или 0 для отмены выбора: ", end='')
             path_to_excel_file = input()
             if path_to_excel_file in ['0', 'выход']:
-                print(f'└[0] Выход')
+                print(f' └[0] Выход')
                 main_menu = True
+
                 break
 
             if '"' in path_to_excel_file: path_to_excel_file = path_to_excel_file.replace('"', '')
             if "'" in path_to_excel_file: path_to_excel_file = path_to_excel_file.replace("'", '')
-            print(f'└┬[3] Запуск программы: [{choice_programm}]')
+            print(f' └┬[3] Запуск программы: [{choice_programm}]')
 
             start_time = time.time()
 
-            if choice_programm == 365:
-                MainLogic.start_annual_plan(path_to_excel_file=path_to_excel_file)
+            if choice_programm == 365: MainLogic.start_copy_report(path_to_excel_file=path_to_excel_file, user_selected_program=choice_programm)
+            if choice_programm == 3: MainLogic.start_copy_report(path_to_excel_file=path_to_excel_file, user_selected_program=choice_programm)
 
             elapsed = time.time() - start_time
             duration = timedelta(seconds=elapsed)
-            print(f' └[Success] Время выполнения программы: {duration} сек.')
+            print(f'  └[Success] Время выполнения программы: {duration} сек.')
 
         continue

@@ -129,7 +129,6 @@ class ExcelReader:
             self.skip_sheet = skip_sheet
 
         file_format = self._detect_format(path)
-        print(f"[excel_reader] Обнаружен формат: {file_format}")
 
         try:
             if file_format == "xls":
@@ -147,14 +146,12 @@ class ExcelReader:
                 sheet_names = list(data.keys())
                 if sheet_names:
                     first_sheet = sheet_names[0]
-                    print(f"Лист не указан. Загружаем первый лист: {first_sheet}")
                     data = data[first_sheet]
                 else:
                     raise ValueError("Файл Excel не содержит листов.")
 
             if file_path is None and sheet_name is None:
                 self.data = data
-                print(f"Лист успешно загружен: {sheet if sheet else 'первый лист'}")
 
             return data, self.cell_colors
 
@@ -172,8 +169,6 @@ class ExcelReader:
         Интегрированная логика: автоопределение кодировки, обработка пустых строк как NaN,
         поддержка произвольной строки заголовков.
         """
-        print("[ExcelReader] Чтение как .xls (xlrd)...")
-
         workbook = None
         used_encoding = None
         last_error = None
@@ -182,7 +177,6 @@ class ExcelReader:
             try:
                 workbook = xlrd.open_workbook(path, encoding_override=encoding)
                 used_encoding = encoding
-                print(f"[ExcelReader] .xls открыт с кодировкой: {encoding}")
             except Exception as e:
                 print(f"[ExcelReader] Кодировка {encoding} не подошла: {e}")
                 last_error = e
@@ -193,7 +187,6 @@ class ExcelReader:
                 try:
                     workbook = xlrd.open_workbook(path, encoding_override=enc)
                     used_encoding = enc
-                    print(f"[ExcelReader] .xls открыт с кодировкой: {enc}")
                     break
                 except Exception as e:
                     last_error = e
@@ -203,7 +196,6 @@ class ExcelReader:
             try:
                 workbook = xlrd.open_workbook(path)
                 used_encoding = "auto"
-                print("[ExcelReader] .xls открыт без принудительной кодировки")
             except Exception as e:
                 raise ValueError(f"Не удалось открыть .xls файл. Последняя ошибка: {last_error}")
 
@@ -222,7 +214,6 @@ class ExcelReader:
                 if not self._should_skip_sheet(s_name, idx):
                     sheet_idx = idx
                     self.sheet_origin = s_name
-                    print(f"[ExcelReader] Пропущены листы: {self.skip_sheet}. Загружен первый доступный: {s_name}")
                     break
 
             if sheet_idx is None:
@@ -286,7 +277,6 @@ class ExcelReader:
             raw_data = pd.read_excel(path, sheet_name=sheet, header=effective_header)
         except ValueError as e:
             if "Passed header=" in str(e) and "but only" in str(e):
-                print(f"[ExcelReader] WARNING: {e}. Пробуем с header=0.")
                 raw_data = pd.read_excel(path, sheet_name=sheet, header=0)
             else:
                 raise
@@ -306,15 +296,12 @@ class ExcelReader:
 
                     if s_name not in skip_list and s_idx not in skip_list:
                         filtered_sheets[s_name] = s_df
-                    else:
-                        print(f"[ExcelReader] Пропущен лист: {s_name}")
 
                 raw_data = filtered_sheets
 
             sheet_names = list(raw_data.keys())
             if sheet_names:
                 first_sheet = sheet_names[0]
-                print(f"[ExcelReader] Лист не указан. Загружаем первый лист: {first_sheet}")
                 df = raw_data[first_sheet]
                 sheet_for_colors = first_sheet
             else:
@@ -367,7 +354,6 @@ class ExcelReader:
     def get_dict_all_data(self) -> Dict[int, Dict[str, Any]]:
         """Возвращает весь словарь данных из self.data."""
         if self.data is None:
-            print("Данные не загружены.")
             return {}
 
         return {index: row.to_dict() for index, row in self.data.iterrows()}
@@ -381,7 +367,6 @@ class ExcelReader:
     def filter_and_save_columns(self, columns_to_save: Union[str, List[str], tuple]):
         """Сохраняет значения из указанных столбцов в словарь."""
         if self.data is None:
-            print("Данные не загружены.")
             return
 
         if isinstance(columns_to_save, str):
@@ -413,7 +398,6 @@ class ExcelReader:
                           skip_condition: Optional[callable] = None) -> List[str]:
         """Извлекает уникальные значения из указанной колонки."""
         if get_column not in self.columns_save:
-            print(f"Название столбцов не совпадают.\n{get_column} в {self.columns_save}")
             return []
 
         result = []
@@ -495,15 +479,11 @@ class MultiSheetReader:
             for idx, name in enumerate(all_sheet_names):
                 if not self._should_skip(name, idx):
                     sheet_names.append(name)
-                else:
-                    print(f"[MultiSheetReader] Пропущен лист: {name}")
         else:
             filtered = []
             for idx, name in enumerate(all_sheet_names):
                 if name in sheet_names and not self._should_skip(name, idx):
                     filtered.append(name)
-                elif name in sheet_names and self._should_skip(name, idx):
-                    print(f"[MultiSheetReader] Пропущен лист: {name}")
             sheet_names = filtered
 
         for sheet_name in sheet_names:
