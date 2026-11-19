@@ -46,7 +46,7 @@ while True:
   ┌───────────────────────────────────────────────────────────┐
  ┌┤{'':<{indentation_choice_input_dse}}{line_text_choice_input_dse}{'':<{indentation_choice_input_dse}}│
  │└───────────────────────────────────────────────────────────┘
- ├[1] Одно ДСЕ (или несколько через '$'): ЛТИЯ.716713.001$ЛТИЯ.712341.004
+ ├[1] Одно ДСЕ (или несколько через '$')
  ├[2] Прочитать столбец из Excel файла
  ├[0] Назад
  └─[Ввод: """)
@@ -63,7 +63,9 @@ while True:
 
     if choice_input_dse == '1':
         while True:
-            dse_input = input(" [1] Одно ДСЕ (или несколько через '$'), или 0 для отмены выбора: ")
+            print("  [1]┐")
+            print("     ├ Пример : ЛТИЯ.716713.001$ЛТИЯ.712341.004")
+            dse_input = input("     └ Одно ДСЕ (или несколько через '$'), или 0 для отмены выбора: ")
 
             if dse_input == '0':
                 main_menu = True
@@ -80,8 +82,8 @@ while True:
                     dse_list.remove(dse)
             del dse
 
-            if choice_programm == 1010:
-                MainLogic().start_generate_repor_database_volna(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
+            if choice_programm in [1010,2012]:
+                MainLogic().start_generate_report_database_volna(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
 
 
     if choice_input_dse == '2':
@@ -121,7 +123,7 @@ while True:
             dse_list = list(dict.fromkeys(data_excel.get(list_name_headers[choice_column - 1])))
             print(len(dse_list))
             if choice_input_dse in [2012]:
-                MainLogic().start_generate_repor_database_volna(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
+                MainLogic().start_generate_report_database_volna(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
             break
 
 

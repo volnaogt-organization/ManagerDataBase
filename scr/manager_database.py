@@ -14,7 +14,6 @@ class MainLogic:
     def __init__(self):
         pass
 
-    @staticmethod
     def _process_single_dse(self, dse, dse_index, total_dse, user_selected_program):
         """
         Изолированная функция-воркер.
