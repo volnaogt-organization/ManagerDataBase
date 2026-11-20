@@ -8,7 +8,7 @@ from scr.handler.handlers_db.assets_1010 import Header1010
 from scr.handler.handlers_db.assets_2012 import Header2012
 from scr.handler.annual_plan import HandlerAnnualPlan
 from scr.handler.queue_management import HandlerQueueManagement
-
+from scr.handler.sz_notifications import HandlerSzNotifications
 
 class MainLogic:
     def __init__(self):
@@ -43,6 +43,13 @@ class MainLogic:
         elif user_selected_program == 3:
             os.path.isfile(path_to_excel_file)
             HandlerQueueManagement().main(path_to_excel_file)
+
+    def start_semi_automatic_update_report(self, path_to_excel_file:str, user_selected_program:int=None):
+        if user_selected_program is None:
+            return
+        os.path.isfile(path_to_excel_file)
+        if user_selected_program==4:
+            HandlerSzNotifications().main(path_to_file=path_to_excel_file)
 
     def start_generate_report_database_volna(self, dse_list: list, user_selected_program: int = None, save_input=0, max_threads=6):
         if user_selected_program is None or not dse_list:
