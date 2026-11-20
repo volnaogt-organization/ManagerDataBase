@@ -7,6 +7,7 @@ from datetime import timedelta, datetime
 from scr.handler.handlers_db.assets_1010 import Header1010
 from scr.handler.handlers_db.assets_2012 import Header2012
 from scr.handler.annual_plan import HandlerAnnualPlan
+from scr.handler.queue_management import HandlerQueueManagement
 
 
 class MainLogic:
@@ -21,7 +22,6 @@ class MainLogic:
         """
         row_index_list_dse = f'{dse_index}/{total_dse}'
 
-        # Создаем новый объект для каждого потока, чтобы избежать Race Condition
         if user_selected_program == 1010:
             report_handler = Header1010()
             result = report_handler.main(name_dse=dse, row_index_list_dse=row_index_list_dse)
@@ -34,11 +34,17 @@ class MainLogic:
         return dse, result
 
     @staticmethod
-    def start_annual_plan(path_to_excel_file):
-        os.path.isfile(path_to_excel_file)
-        HandlerAnnualPlan().main(path_to_excel_file)
+    def start_copy_report(path_to_excel_file, user_selected_program: int = None):
+        if user_selected_program is None:
+            return
+        if user_selected_program == 365:
+            os.path.isfile(path_to_excel_file)
+            HandlerAnnualPlan().main(path_to_excel_file)
+        elif user_selected_program == 3:
+            os.path.isfile(path_to_excel_file)
+            HandlerQueueManagement().main(path_to_excel_file)
 
-    def main(self, dse_list: list, user_selected_program: int = None, save_input=0, max_threads=6):
+    def start_generate_report_database_volna(self, dse_list: list, user_selected_program: int = None, save_input=0, max_threads=6):
         if user_selected_program is None or not dse_list:
             return
 
@@ -60,7 +66,6 @@ class MainLogic:
                 for i, dse in enumerate(dse_list)
             ]
 
-            # Собираем результаты по мере их выполнения
             for future in concurrent.futures.as_completed(futures):
                 try:
                     dse, result = future.result()
@@ -77,4 +82,5 @@ class MainLogic:
             from scr.excel_assets.enters.excel_enter import ExcelDataInserter
 
             writer = ExcelDataInserter(file_path=os.path.join(os.getcwd(), 'result_manager_database_reports.xlsx'))
-            writer.insert_data(data=save_data, sheet_name=f'rep-{user_selected_program} date-{datetime.now().strftime("%d.%m.%Y")}')
+            writer.insert_data(data=save_data,
+                               sheet_name=f'rep-{user_selected_program} date-{datetime.now().strftime("%d.%m.%Y")}')
