@@ -1,8 +1,10 @@
+from time import strftime
+
 import pandas as pd
 from datetime import datetime
 
 from scr.database_assets.handling_database.handler_sz_notifications import SQLiteDatabaseSzNotifications
-from scr.excel_assets.readers.excel_reader_row import ExcelReader
+from scr.excel_assets.readers.excel_fast_reader_row import ExcelReader
 
 
 class HandlerSzNotifications:
@@ -12,48 +14,48 @@ class HandlerSzNotifications:
     def read_file(self, path_to_file):
         reader = ExcelReader(
             file_path=path_to_file
+            , sheet_name='Лист1'
         )
         self.reader_data = reader.get_dict_all_data()
 
     def save_database(self):
-        database_queue_management = SQLiteDatabaseSzNotifications()
-        database_queue_management.delete_all()
+        db = SQLiteDatabaseSzNotifications()
+        db.delete_all()
 
         date = datetime.now().strftime("%d.%m.%Y")
 
-        for idx_row, row_data in self.reader_data.items():
+        def fmt(v):
+            return v.strftime("%d.%m.%Y") if hasattr(v, "strftime") else str(v)[:10]
+
+        batch = []
+        for row_data in self.reader_data.values():
             row_data = {k: (None if pd.isna(v) else v) for k, v in row_data.items()}
-            pdraw_no_str = row_data.get('Изделие', None)
-            draw_no_str = row_data.get('ДСЕ', None)
+            pdraw = row_data.get('Изделие')
+            draw = row_data.get('ДСЕ')
+            date_letter = fmt(row_data.get('Дата пиьсма'))
 
-            raw_date = row_data.get('Дата пиьсма', None)
-            date_letter = raw_date.strftime("%d.%m.%Y") if hasattr(raw_date, 'strftime') else raw_date
-            # date_letter=row_data.get('Дата пиьсма', None).strftime("%d.%m.%Y")
+            batch.append(
+            {
+                'DateLetter': date_letter,
+                'InformationLetter': row_data.get('Инф из письма'),
+                'PDrawNoStr': pdraw,
+                'PShortName': row_data.get('Наименование'),
+                'DrawNoStr': draw,
+                'ShortName': row_data.get('Наименование2'),
+                'Signed': fmt(row_data.get('Подписано')),
+                'WorkCenter': row_data.get('РЦ'),
+                'Completed': fmt(row_data.get('Выполнено')),
+                'WorkCenterAccordingTechnicalPlan': row_data.get('РЦ по ТП'),
+                'Comments': row_data.get('Комментарии'),
+                'Closed': row_data.get('Закрыто'),
+                'AutoCommentParameter': row_data.get('Авто коммент. (параметр автоматизации)'),
+                'Terrorist': row_data.get('Технолог'),
+                'DateStart': date,
+                'DateLetterPDrawNoStrDrawNoStr': f'{date_letter}/{pdraw}/{draw}/{len(batch)}',
+            }
+        )
 
-            completed = row_data.get('Выполнено', None)
-            completed = completed.strftime("%d.%m.%Y") if hasattr(completed, 'strftime') else completed
-
-            signed =  row_data.get('Подписано', None)
-            signed =  signed.strftime("%d.%m.%Y") if hasattr(signed, 'strftime') else signed
-
-            database_queue_management.set_program_db(
-                DateLetter=date_letter
-                , InformationLetter=row_data.get('Инф из письма', None)
-                , PDrawNoStr=pdraw_no_str
-                , PShortName=row_data.get('Наименование', None)
-                , DrawNoStr=draw_no_str
-                , ShortName=row_data.get('Наименование2', None)
-                , Signed=signed
-                , WorkCenter=row_data.get('РЦ', None)
-                , Completed=completed
-                , WorkCenterAccordingTechnicalPlan=row_data.get('РЦ по ТП', None)
-                , Comments=row_data.get('Комментарии', None)
-                , Closed=row_data.get('Закрыто', None)
-                , AutoCommentParameter=row_data.get('Авто коммент. (параметр автоматизации)', None)
-                , Terrorist=row_data.get('Технолог', None)
-                , DateStart=date
-                , DateLetterPDrawNoStrDrawNoStr=f'{str(date_letter)}/{pdraw_no_str}/{draw_no_str}'
-            )
+        db.replace_all_notifications(batch)
 
     def main(self, path_to_file):
         self.read_file(path_to_file)

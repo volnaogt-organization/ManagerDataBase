@@ -4,6 +4,7 @@ import sqlite3
 import pandas as pd
 
 from typing import Dict, List, Any, Optional
+from collections import Counter
 
 
 class SQLiteManager:
@@ -34,6 +35,9 @@ class SQLiteManager:
         self.unique_keys = unique_keys
 
         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+        self.conn.execute("PRAGMA journal_mode = MEMORY")
+        self.conn.execute("PRAGMA synchronous = NORMAL")
+        self.conn.execute("PRAGMA cache_size = -64000")  # 64 МБ
         self.conn.row_factory = sqlite3.Row
         self.cur = self.conn.cursor()
 
@@ -94,6 +98,35 @@ class SQLiteManager:
         self.cur.execute(query, params)
         self.conn.commit()
         return self.cur.fetchall()
+
+    def replace_all(self, rows: List[Dict[str, Any]]):
+        if not rows:
+            with self.conn:
+                self.cur.execute(f"DELETE FROM {self.table_name}")
+            return
+
+        if self.unique_keys:
+            keys = [tuple(row.get(k, '') for k in self.unique_keys) for row in rows]
+            dupes = [k for k, c in Counter(keys).items() if c > 1]
+
+            deduped = {}
+            for key, row in zip(keys, rows):
+                deduped[key] = row
+            rows = list(deduped.values())
+
+        cols = list(self.schema.keys())
+        placeholders = ", ".join("?" for _ in cols)
+        sql = f"INSERT INTO {self.table_name} ({', '.join(cols)}) VALUES ({placeholders})"
+        values = [tuple(row.get(c, '') for c in cols) for row in rows]
+
+        with self.conn:
+            self.cur.execute(f"DELETE FROM {self.table_name}")
+            self.cur.executemany(sql, values)
+
+    def execute_many(self, sql: str, params_list: List[tuple]):
+        """Батч-выполнение произвольного SQL с одним commit."""
+        with self.conn:
+            self.cur.executemany(sql, params_list)
 
     def close(self):
         self.conn.close()

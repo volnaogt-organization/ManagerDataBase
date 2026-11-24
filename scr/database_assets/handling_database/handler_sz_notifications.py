@@ -88,6 +88,10 @@ class SQLiteDatabaseSzNotifications:
         query = f"DELETE FROM {self.data_base.table_name} WHERE DateStart = ?"
         self.data_base.execute_query(query, (name_import,))
 
+    def replace_all_notifications(self, rows: List[Dict[str, Any]]):
+        """Полная замена содержимого таблицы уведомлений одним батчем."""
+        self.data_base.replace_all(rows)
+
     def delete_all(self):
         """Удаляет все записи из таблицы."""
         query = f"DELETE FROM {self.data_base.table_name}"
