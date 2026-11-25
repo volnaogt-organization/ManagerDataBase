@@ -42,7 +42,14 @@ class MainLogic:
             HandlerAnnualPlan().main(path_to_excel_file)
         elif user_selected_program == 3:
             os.path.isfile(path_to_excel_file)
-            HandlerQueueManagement().main(path_to_excel_file)
+            save_data = HandlerQueueManagement().main(path_to_excel_file)
+
+            from scr.excel_assets.enters.excel_enter import ExcelDataInserter
+
+            writer = ExcelDataInserter(file_path=os.path.join(os.getcwd(), 'result_manager_database_reports.xlsx'))
+            writer.insert_data(data={'':save_data},
+                               sheet_name=f'QM {datetime.now().strftime("%d.%m.%Y")}')
+
 
     def start_semi_automatic_update_report(self, path_to_excel_file:str, user_selected_program:int=None):
         if user_selected_program is None:
