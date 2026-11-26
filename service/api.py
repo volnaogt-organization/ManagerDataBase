@@ -23,6 +23,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from scr.manager_database import MainLogic
+from scr.handler.handlers_excel.handler_reader_excel import DataAcquisition, ReaderExcelColumn
 
 MODULE_NAME = "managerdatabase"
 MODULE_VERSION = os.environ.get("MODULE_VERSION", "dev")
@@ -57,6 +58,21 @@ class RunRequest(BaseModel):
 
 class ExcelJobRequest(BaseModel):
     path_to_excel_file: str
+
+
+class ExcelSheetsRequest(BaseModel):
+    path: str
+
+
+class ExcelColumnsRequest(BaseModel):
+    path: str
+    sheet: str
+
+
+class ExcelDseColumnRequest(BaseModel):
+    path: str
+    sheet: str
+    column_index: int = Field(..., ge=1, description="Номер столбца, начиная с 1")
 
 
 @app.get("/health")
@@ -145,6 +161,63 @@ def queue_management(req: ExcelJobRequest):
 def sz_notifications(req: ExcelJobRequest):
     """ДСЕ по СЗ и извещениям (4) из Excel-файла."""
     return _excel_job(req, 4)
+
+
+# ---------- Чтение Excel: листы, столбцы, ДСЕ из столбца ----------
+
+def _check_excel(path: str):
+    path = (path or "").strip().strip('"').strip("'")
+    if not path or not os.path.isfile(path):
+        raise HTTPException(400, f"Файл не найден: {path}")
+    return path
+
+
+@app.post("/excel/sheets")
+def excel_sheets(req: ExcelSheetsRequest):
+    """Список листов Excel-файла."""
+    path = _check_excel(req.path)
+    try:
+        return {"sheets": DataAcquisition(path).get_list_excel_file()}
+    except Exception as e:
+        raise HTTPException(500, f"Не удалось прочитать файл: {e}")
+
+
+@app.post("/excel/columns")
+def excel_columns(req: ExcelColumnsRequest):
+    """Заголовки столбцов указанного листа."""
+    path = _check_excel(req.path)
+    try:
+        headers = DataAcquisition(path).get_headers(name_list=req.sheet)
+        columns = [
+            {"index": i + 1, "name": str(h) if h is not None and str(h).strip() else f"Столбец {i + 1}"}
+            for i, h in enumerate(headers)
+        ]
+        return {"columns": columns}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Не удалось прочитать столбцы: {e}")
+
+
+@app.post("/excel/dse_column")
+def excel_dse_column(req: ExcelDseColumnRequest):
+    """Список ДСЕ из столбца Excel (без пустых и повторов, как в cmd_body)."""
+    path = _check_excel(req.path)
+    try:
+        data = ReaderExcelColumn(
+            path_to_excel_file=path,
+            name_sheet=req.sheet,
+        ).get_data_column([req.column_index])
+
+        values = next(iter(data.values()), [])
+        dse_list = list(dict.fromkeys(str(v).strip() for v in values if v is not None and str(v).strip()))
+        if not dse_list:
+            raise HTTPException(400, "В выбранном столбце нет значений")
+        return {"dse_list": dse_list, "count": len(dse_list)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Не удалось прочитать столбец: {e}")
 
 
 if __name__ == "__main__":
