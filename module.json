@@ -14,8 +14,44 @@
   },
   "ui": {
     "commands": [
-      { "title": "Отчёт 1010: введите ДСЕ через $", "program": 1010 },
-      { "title": "Отчёт 2012: введите ДСЕ через $", "program": 2012 }
+      {
+        "id": "report_1010",
+        "title": "Отчёт 1010",
+        "hint": "введите ДСЕ через $ или ;",
+        "input": "dse_list",
+        "endpoint": "/run",
+        "payload": { "program": 1010, "save_input": 0 },
+        "default": true
+      },
+      {
+        "id": "report_2012",
+        "title": "Отчёт 2012",
+        "hint": "введите ДСЕ через $ или ;",
+        "input": "dse_list",
+        "endpoint": "/run",
+        "payload": { "program": 2012, "save_input": 0 }
+      },
+      {
+        "id": "annual_plan",
+        "title": "Загрузка годового отчёта (365)",
+        "hint": "выберите Excel-файл",
+        "input": "excel_file",
+        "endpoint": "/annual_plan"
+      },
+      {
+        "id": "queue_management",
+        "title": "УП по очередям (3)",
+        "hint": "выберите Excel-файл",
+        "input": "excel_file",
+        "endpoint": "/queue_management"
+      },
+      {
+        "id": "sz_notifications",
+        "title": "ДСЕ по СЗ и извещениям (4)",
+        "hint": "выберите Excel-файл",
+        "input": "excel_file",
+        "endpoint": "/sz_notifications"
+      }
     ]
   }
 }
