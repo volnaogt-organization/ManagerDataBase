@@ -1,0 +1,21 @@
+{
+  "name": "managerdatabase",
+  "display_name": "ManagerDataBase",
+  "description": "Обработка производственных отчётов 1010/2012 по спискам ДСЕ, годовой план, УП по очередям, ДСЕ по СЗ и извещениям",
+  "version": "0.5.2",
+  "api": {
+    "port": 8000,
+    "health": "/health",
+    "manifest": "/manifest"
+  },
+  "capabilities": {
+    "dse_reports": [1010, 2012],
+    "excel_jobs": [3, 4, 365]
+  },
+  "ui": {
+    "commands": [
+      { "title": "Отчёт 1010: введите ДСЕ через $", "program": 1010 },
+      { "title": "Отчёт 2012: введите ДСЕ через $", "program": 2012 }
+    ]
+  }
+}
