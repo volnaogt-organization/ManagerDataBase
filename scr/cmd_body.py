@@ -69,7 +69,7 @@ while True:
         while True:
             print("  [1i]┐")
             print("     ├ Пример : ЛТИЯ.716713.001$ЛТИЯ.712341.004")
-            dse_input = input("     └ Одно ДСЕ (или несколько через '$'), или 0 для отмены выбора: ")
+            dse_input = input("     ├ Одно ДСЕ (или несколько через '$'), или 0 для отмены выбора: ")
 
             if dse_input == '0':
                 main_menu = True
@@ -86,8 +86,15 @@ while True:
                     dse_list.remove(dse)
             del dse
 
+            start_time = time.time()
+
             if choice_programm in [1010,2012]:
                 MainLogic().start_generate_report_database_volna(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
+            elapsed = time.time() - start_time
+            duration = timedelta(seconds=elapsed)
+            print(f'     ├[Success] Время выполнения программы: {duration} сек.')
+            if input(r'     └ Открыть excel файл? [y/N]:') in ['y', 'Y']: os.startfile(
+                os.path.join(os.getcwd(), 'result_manager_database_reports.xlsx'))
 
 
     if choice_input_dse == '2':
@@ -114,9 +121,9 @@ while True:
             list_name_headers = view_file.get_headers(name_list=list_sheets[int(choice_name_sheet)])
 
             for idx_list in range(1, len(list_name_headers) + 1):
-                print(f'   ├─[{idx_list}] {list_name_headers[idx_list - 1]}')
+                print(f'   ├[{idx_list}] {list_name_headers[idx_list - 1]}')
 
-            choice_column = int(input('   └─[Ввод: '))
+            choice_column = int(input('   ├[Ввод: '))
             print(list_name_headers[choice_column - 1], end=': ')
 
             data_excel = ReaderExcelColumn(
@@ -126,8 +133,16 @@ while True:
 
             dse_list = list(dict.fromkeys(data_excel.get(list_name_headers[choice_column - 1])))
             print(len(dse_list))
+            start_time = time.time()
+
             if choice_input_dse in [2012]:
                 MainLogic().start_generate_report_database_volna(dse_list=dse_list, user_selected_program=choice_programm, save_input=int(save_input))
+
+            elapsed = time.time() - start_time
+            duration = timedelta(seconds=elapsed)
+            print(f'   ├[Success] Время выполнения программы: {duration} сек.')
+            if input(r'   └ Открыть excel файл? [y/N]:') in ['y', 'Y']: os.startfile(
+                os.path.join(os.getcwd(), 'result_manager_database_reports.xlsx'))
             break
 
 
@@ -153,7 +168,10 @@ while True:
 
             elapsed = time.time() - start_time
             duration = timedelta(seconds=elapsed)
-            print(f'  └[Success] Время выполнения программы: {duration} сек.')
+            print(f' ├[Success] Время выполнения программы: {duration} сек.')
+            if input(r' └ Открыть excel файл? [y/N]:') in ['y','Y']: os.startfile(os.path.join(os.getcwd(), 'result_manager_database_reports.xlsx'))
+
+
 
         continue
 
@@ -184,6 +202,9 @@ while True:
 
             elapsed = time.time() - start_time
             duration = timedelta(seconds=elapsed)
-            print(f'    └[Success] Время выполнения программы: {duration} сек.')
+            print(f'  ├[Success] Время выполнения программы: {duration} сек.')
+            if input(r'  └ Открыть excel файл? [y/N]:') in ['y', 'Y']: os.startfile(
+                os.path.join(os.getcwd(), 'result_manager_database_reports.xlsx'))
+
 
         continue
