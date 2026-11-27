@@ -42,7 +42,7 @@ class Header2012:
 
             data_list = df.to_dict(orient="records")
             print(
-                f"{name_dse} [{self.row_index_list_dse}]: получено строк: {len(data_list)}"
+                f"      ├─ [{name_dse}] [{self.row_index_list_dse}]: получено строк: {len(data_list)}"
             )
 
             if len(data_list) == 0:
@@ -79,11 +79,14 @@ class Header2012:
                 SearchResults=self.bool_search_results,
                 **row_data
             )
-            list_product_prog = [None, None]
             try:
                 list_product_prog = str(row_data.get('ProductProg','')).split(';')
             except:
                 list_product_prog = [None,None]
+            if 0<len(list_product_prog)<2:
+                list_product_prog = [list_product_prog[0], list_product_prog[0]]
+
+
             try:
                 data_save[len(data_save)] = {
                     'PDrawNoStr': row_data.get('PDrawNoStr','')
@@ -95,7 +98,8 @@ class Header2012:
                     ,'ProductProg: date last mod':list_product_prog[1]
                 }
             except Exception as error_save:
-                print('assets_2012:',error_save)
+                raise error_save
+                # print('assets_2012:',error_save)
 
         return data_save
 

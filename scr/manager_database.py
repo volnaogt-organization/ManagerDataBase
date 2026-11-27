@@ -66,7 +66,7 @@ class MainLogic:
         total_dse = len(dse_list)
         t_start = time.time()
 
-        print(f"Начало обработки {total_dse} элементов в {max_threads} потоков...")
+        print(f"      ├ Начало обработки {total_dse} элементов в {max_threads} потоков...")
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
             futures = [
@@ -90,7 +90,7 @@ class MainLogic:
 
         elapsed = time.time() - t_start
         duration = timedelta(seconds=elapsed)
-        print(f'Время обращения к базе данных: {duration}')
+        print(f'      ├ Время обращения к базе данных: {duration}')
 
         if bool(save_input):
             from scr.excel_assets.enters.excel_enter import ExcelDataInserter
