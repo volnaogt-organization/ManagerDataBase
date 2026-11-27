@@ -1,0 +1,104 @@
+{
+  "name": "managerdatabase",
+  "display_name": "ManagerDataBase",
+  "description": "Обработка производственных отчётов 1010/2012 по спискам ДСЕ, годовой план, УП по очередям, ДСЕ по СЗ и извещениям",
+  "version": "0.5.3",
+  "api": {
+    "port": 8000,
+    "health": "/health",
+    "manifest": "/manifest"
+  },
+  "capabilities": {
+    "dse_reports": [
+      1010,
+      2012
+    ],
+    "excel_jobs": [
+      3,
+      4,
+      365
+    ]
+  },
+  "ui": {
+    "commands": [
+      {
+        "id": "report_1010",
+        "title": "Отчёт 1010",
+        "hint": "введите ДСЕ через $ или ;",
+        "input": "dse_list",
+        "endpoint": "/run",
+        "payload": {
+          "program": 1010,
+          "save_input": 0
+        },
+        "default": true,
+        "result_file": "result_manager_database_reports.xlsx"
+      },
+      {
+        "id": "report_2012",
+        "title": "Отчёт 2012",
+        "hint": "введите ДСЕ через $ или ;",
+        "input": "dse_list",
+        "endpoint": "/run",
+        "payload": {
+          "program": 2012,
+          "save_input": 0
+        },
+        "result_file": "result_manager_database_reports.xlsx"
+      },
+      {
+        "id": "report_1010_excel",
+        "title": "Отчёт 1010 из Excel",
+        "hint": "выберите файл, лист и столбец с ДСЕ",
+        "input": "excel_column",
+        "filter": "Excel (*.xlsx;*.xls;*.xlsm)|*.xlsx;*.xls;*.xlsm|Все файлы (*.*)|*.*",
+        "endpoint": "/run",
+        "payload": {
+          "program": 1010,
+          "save_input": 0
+        },
+        "result_file": "result_manager_database_reports.xlsx"
+      },
+      {
+        "id": "report_2012_excel",
+        "title": "Отчёт 2012 из Excel",
+        "hint": "выберите файл, лист и столбец с ДСЕ",
+        "input": "excel_column",
+        "filter": "Excel (*.xlsx;*.xls;*.xlsm)|*.xlsx;*.xls;*.xlsm|Все файлы (*.*)|*.*",
+        "endpoint": "/run",
+        "payload": {
+          "program": 2012,
+          "save_input": 0
+        },
+        "result_file": "result_manager_database_reports.xlsx"
+      },
+      {
+        "id": "annual_plan",
+        "title": "Загрузка годового отчёта (365)",
+        "hint": "введите путь к файлу или нажмите 📂",
+        "input": "file",
+        "filter": "Excel (*.xlsx;*.xls)|*.xlsx;*.xls|Все файлы (*.*)|*.*",
+        "endpoint": "/annual_plan",
+        "result_file": "result_manager_database_reports.xlsx"
+      },
+      {
+        "id": "queue_management",
+        "title": "УП по очередям (3)",
+        "hint": "введите путь к файлу или нажмите 📂",
+        "input": "file",
+        "filter": "Excel (*.xlsx;*.xls)|*.xlsx;*.xls|Все файлы (*.*)|*.*",
+        "endpoint": "/queue_management",
+        "result_file": "result_manager_database_reports.xlsx"
+      },
+      {
+        "id": "sz_notifications",
+        "title": "ДСЕ по СЗ и извещениям (4)",
+        "hint": "введите путь к файлу или нажмите 📂",
+        "input": "file",
+        "filter": "Excel (*.xlsx;*.xls)|*.xlsx;*.xls|Все файлы (*.*)|*.*",
+        "endpoint": "/sz_notifications",
+        "result_file": "result_manager_database_reports.xlsx"
+      }
+    ]
+  }
+}
